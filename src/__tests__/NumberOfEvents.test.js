@@ -5,9 +5,11 @@ import NumberOfEvents from '../NumberOfEvents';
 describe('<NumberOfEvents /> component', () => {
     let NumberOfEventsWrapper;
 
-    beforeAll(() => {
-        NumberOfEventsWrapper = shallow(<NumberOfEvents />)
-    });
+	beforeAll(() => {
+		NumberOfEventsWrapper = shallow(
+		  <NumberOfEvents updateNumberOfEvents={() => {}} />
+		);
+	  });
 
 		test('render text input', () => {
 			expect(NumberOfEventsWrapper.find('.numberOfEvents')).toHaveLength(1);
