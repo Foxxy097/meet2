@@ -13,28 +13,38 @@ class App extends Component {
     numberOfEvents: 32,
   }
 
-  render() {
-    return (
-      <div className="App">
-        <CitySearch locations={this.state.locations} updateEvents={this.updateEvents} />
-        <EventList events={this.state.events}/>
-        <NumberOfEvents />
-        
-
-      </div>
-    );
-  }
-
-  updateEvents = (location) => {
+  updateEvents = (location, eventCount = this.state.numberOfEvents) => {
+    this.setState({ isOnline: navigator.onLine ? true: false });
     getEvents().then((events) => {
-      const locationEvents = (location === 'all') ?
-      events :
-      events.filter((event) => event.location === location);
-      this.setState({
-        events: locationEvents
+      const locationEvents = (location === 'all') 
+      ? events
+      : events.filter((event) => event.location === location);
+      if(this.mounted) {
+        this.setState({
+        events: locationEvents.slice(0, eventCount),
+        location: location,
+        currentLocation: location
       });
-    })
-  }
+      }
+        });    
+    };
+  
+    updateNumberOfEvents = async (e) => {
+      const newNumber = e.target.value ? parseInt(e.target.value) : 100;
+  
+      if(newNumber < 1 || newNumber > 100){
+        await this.setState({ 
+          numberOfEvents: newNumber,
+        errorText: 'Please choose a number between 0 and 100' 
+      });
+      } else {
+        await this.setState({
+          errorText:'',
+          numberOfEvents: newNumber
+        });
+        this.updateEvents(this.state.currentLocation, this.state.numberOfEvents);
+      } 
+    }
 
   componentDidMount() {
     this.mounted = true;
@@ -49,6 +59,19 @@ class App extends Component {
     this.mounted = false;
   }
 
+
+  render() {
+    return (
+      <div className="App">
+        <CitySearch locations={this.state.locations} updateEvents={this.updateEvents} />
+        <EventList events={this.state.events}/>
+        <NumberOfEvents 
+        numberOfEvents={this.state.numberOfEvents}
+        updateNumberOfEvents={this.updateNumberOfEvents}
+        errorText ={this.state.errorText}/>
+  
+        </div>);
+  }
 }
 
 export default App;
