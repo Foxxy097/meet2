@@ -11,7 +11,7 @@ import { ErrorAlert } from "./alert";
     const eventCount = e.target.value;
     if (eventCount < 1 || eventCount > 32) {
       this.setState({
-        numberOfEvents: "",
+        numberOfEvents: eventCount,
         infoText: "Please enter a number between 1 and 32",
       });
     } else {
